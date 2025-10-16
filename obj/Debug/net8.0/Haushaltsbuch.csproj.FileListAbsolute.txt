@@ -1,0 +1,15 @@
+C:\Users\ForerOlga\source\repos\MeineProjekte1\Haushaltsbuch\bin\Debug\net8.0\Haushaltsbuch.exe
+C:\Users\ForerOlga\source\repos\MeineProjekte1\Haushaltsbuch\bin\Debug\net8.0\Haushaltsbuch.deps.json
+C:\Users\ForerOlga\source\repos\MeineProjekte1\Haushaltsbuch\bin\Debug\net8.0\Haushaltsbuch.runtimeconfig.json
+C:\Users\ForerOlga\source\repos\MeineProjekte1\Haushaltsbuch\bin\Debug\net8.0\Haushaltsbuch.dll
+C:\Users\ForerOlga\source\repos\MeineProjekte1\Haushaltsbuch\bin\Debug\net8.0\Haushaltsbuch.pdb
+C:\Users\ForerOlga\source\repos\MeineProjekte1\Haushaltsbuch\obj\Debug\net8.0\Haushaltsbuch.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\ForerOlga\source\repos\MeineProjekte1\Haushaltsbuch\obj\Debug\net8.0\Haushaltsbuch.AssemblyInfoInputs.cache
+C:\Users\ForerOlga\source\repos\MeineProjekte1\Haushaltsbuch\obj\Debug\net8.0\Haushaltsbuch.AssemblyInfo.cs
+C:\Users\ForerOlga\source\repos\MeineProjekte1\Haushaltsbuch\obj\Debug\net8.0\Haushaltsbuch.csproj.CoreCompileInputs.cache
+C:\Users\ForerOlga\source\repos\MeineProjekte1\Haushaltsbuch\obj\Debug\net8.0\Haushaltsbuch.sourcelink.json
+C:\Users\ForerOlga\source\repos\MeineProjekte1\Haushaltsbuch\obj\Debug\net8.0\Haushaltsbuch.dll
+C:\Users\ForerOlga\source\repos\MeineProjekte1\Haushaltsbuch\obj\Debug\net8.0\refint\Haushaltsbuch.dll
+C:\Users\ForerOlga\source\repos\MeineProjekte1\Haushaltsbuch\obj\Debug\net8.0\Haushaltsbuch.pdb
+C:\Users\ForerOlga\source\repos\MeineProjekte1\Haushaltsbuch\obj\Debug\net8.0\Haushaltsbuch.genruntimeconfig.cache
+C:\Users\ForerOlga\source\repos\MeineProjekte1\Haushaltsbuch\obj\Debug\net8.0\ref\Haushaltsbuch.dll

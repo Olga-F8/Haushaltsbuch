@@ -14,14 +14,17 @@ namespace Haushaltsbuch
         public string NAME { get; set; }
         public string PASSWORT { get; set; }
         public static int AktuellerUserID { get; set; }
+        public double AUSGABENLIMIT { get; set; }
+
 
         public static List<User> users = new List<User>();
 
-        public User(int id, string name, string passwort)
+        public User(int id, string name, string passwort, double AusgabenLimit)
         {
             ID = id;
             NAME = name;
             PASSWORT = passwort;
+            AUSGABENLIMIT = AusgabenLimit;
         }
 
         public static void UserErstellen()
@@ -36,7 +39,7 @@ namespace Haushaltsbuch
             else
                 id = users[users.Count-1].ID + 1;
 
-            User user = new User(id, name, passwort);
+            User user = new User(id, name, passwort, 0.0);
             users.Add(user);
             Json.JsonSpeichern(users, KategorieClass.Kategorien, Eintrag.Eintraege);
             Console.WriteLine("Benutzer erstellt: " + user.NAME);
@@ -54,7 +57,8 @@ namespace Haushaltsbuch
                 {
                     Console.WriteLine("Login erfolgreich: " + user.NAME);
                     AktuellerUserID = user.ID;
-                    return user.ID;
+
+                    return AktuellerUserID;
                 }
             }
             Console.WriteLine("Login fehlgeschlagen");

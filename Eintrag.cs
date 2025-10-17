@@ -56,19 +56,22 @@ namespace Haushaltsbuch
                 Console.WriteLine("Ungültiger Typ. Bitte 'Einnahme' oder 'Ausgabe' eingeben.");
                 return;
             }
-           
+
             Eintrag neuerEintrag = new Eintrag(User.AktuellerUserID, betrag, kategorie, datum, typ);
             Eintraege.Add(neuerEintrag);
-           
+
             //kategorie wird nicht gespeichert
             KategorieClass neueKategorie = new KategorieClass(kategorie);
             KategorieClass.Kategorien.Add(neueKategorie);
 
-           KategorieClass.doppelteKategorienEntfernen();
+            KategorieClass.doppelteKategorienEntfernen();
             //aus der liste doppelte kategorie entfernen
 
             Json.JsonSpeichern(User.users, KategorieClass.Kategorien, Eintraege);
-            Console.WriteLine("Eintrag erfolgreich hinzugefügt!");
+            Console.WriteLine("Eintrag erfolgreich hinzugefügt!\n");
+            Statistik.GesamtausgabenBerechen();
+            Statistik.AusgabenLimitPruefen();
+
         }
 
         public static void EintraegeAnzeigen()
@@ -108,7 +111,7 @@ namespace Haushaltsbuch
                 Console.WriteLine("Falsche Eingabe!");
                 return;
             }
-           var eintrag = Eintrag.Eintraege[nummer-1];
+            var eintrag = Eintrag.Eintraege[nummer - 1];
             if (eintrag != null)
             {
                 Eintrag.Eintraege.Remove(eintrag);

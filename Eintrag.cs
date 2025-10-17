@@ -8,13 +8,17 @@ namespace Haushaltsbuch
 {
     internal class Eintrag
     {
+        public int UserId { get; set; }
+
         public double Betrag { get; set; }
         public string Kategorie { get; set; }
         public DateTime Datum { get; set; }
         public string Typ { get; set; }
+        public static List<Eintrag> Eintraege = new List<Eintrag>();
 
-        public Eintrag(double betrag, string kategorie, DateTime datum, string typ)
+        public Eintrag(int userid, double betrag, string kategorie, DateTime datum, string typ)
         {
+            UserId = userid;
             Betrag = betrag;
             Kategorie = kategorie;
             Datum = datum;
@@ -52,8 +56,18 @@ namespace Haushaltsbuch
                 Console.WriteLine("Ungültiger Typ. Bitte 'Einnahme' oder 'Ausgabe' eingeben.");
                 return;
             }
-            Eintrag neuerEintrag = new Eintrag(betrag, kategorie, datum, typ);
-            User.Eintraege.Add(neuerEintrag);
+           
+            Eintrag neuerEintrag = new Eintrag(User.AktuellerUserID, betrag, kategorie, datum, typ);
+            Eintraege.Add(neuerEintrag);
+           
+            //kategorie wird nicht gespeichert
+            KategorieClass neueKategorie = new KategorieClass(kategorie);
+            KategorieClass.Kategorien.Add(neueKategorie);
+
+           KategorieClass.doppelteKategorienEntfernen();
+            //aus der liste doppelte kategorie entfernen
+
+            Json.JsonSpeichern(User.users, KategorieClass.Kategorien, Eintraege);
             Console.WriteLine("Eintrag erfolgreich hinzugefügt!");
         }
 
@@ -62,15 +76,22 @@ namespace Haushaltsbuch
             int count = 0;
             Console.Clear();
             Console.WriteLine("***Alle Einträge***\n");
-            if (User.Eintraege.Count == 0)
+            if (Eintraege.Count == 0)
             {
                 Console.WriteLine("Keine Einträge vorhanden.");
                 return;
             }
-            foreach (var eintrag in User.Eintraege)
+            foreach (var eintrag in Eintraege)
             {
-                count++;
-                Console.WriteLine($"{count}+1. Betrag: {eintrag.Betrag}, Kategorie: {eintrag.Kategorie}, Datum: {eintrag.Datum.ToShortDateString()}, Typ: {eintrag.Typ}");
+                if (eintrag.UserId == User.AktuellerUserID)
+                {
+                    count++;
+                    Console.WriteLine($"{count}. Betrag: {eintrag.Betrag}, Kategorie: {eintrag.Kategorie}, Datum: {eintrag.Datum.ToShortDateString()}, Typ: {eintrag.Typ}");
+                }
+            }
+            if (count == 0)
+            {
+                Console.WriteLine("Keine Einträge vorhanden.");
             }
         }
 
@@ -87,15 +108,16 @@ namespace Haushaltsbuch
                 Console.WriteLine("Falsche Eingabe!");
                 return;
             }
-           var eintrag = User.Eintraege[nummer-1];
+           var eintrag = Eintrag.Eintraege[nummer-1];
             if (eintrag != null)
             {
-                User.Eintraege.Remove(eintrag);
+                Eintrag.Eintraege.Remove(eintrag);
+                Json.JsonSpeichern(User.users, KategorieClass.Kategorien, Eintrag.Eintraege);
                 Console.WriteLine("Eintrag erfolgreich gelöscht!");
             }
             else
             {
-                Console.WriteLine("Kein Eintrag für das angegebene Datum gefunden.");
+                Console.WriteLine("Kein Eintrag für die angegebene Nummer gefunden.");
             }
         }
 

@@ -1,0 +1,34 @@
+[
+    {
+        "NAME": "Fahrkosten",
+        "BESCHREIBUNG": null
+    },
+    {
+        "NAME": "Lebensmittel",
+        "BESCHREIBUNG": null
+    },
+    {
+        "NAME": "Freizeit",
+        "BESCHREIBUNG": null
+    },
+    {
+        "NAME": "Miete",
+        "BESCHREIBUNG": null
+    },
+    {
+        "NAME": "Kleidung",
+        "BESCHREIBUNG": null
+    },
+    {
+        "NAME": "Geburtstagsgeschenk",
+        "BESCHREIBUNG": null
+    },
+    {
+        "NAME": "Sonstiges",
+        "BESCHREIBUNG": null
+    },
+    {
+        "NAME": "Schulsachen",
+        "BESCHREIBUNG": null
+    }
+]

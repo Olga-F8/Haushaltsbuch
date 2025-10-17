@@ -6,14 +6,20 @@ using System.Threading.Tasks;
 
 namespace Haushaltsbuch
 {
-    internal class Kategorie
+    public class KategorieClass
     {
         public string NAME { get; set; }
         public string BESCHREIBUNG { get; set; }
-        public Kategorie(string name, string beschreibung)
+
+        public static List<KategorieClass> Kategorien = new List<KategorieClass>();
+        public KategorieClass(string name)
         {
             NAME = name;
-            BESCHREIBUNG = beschreibung;
+        }
+
+        public static void doppelteKategorienEntfernen()
+        {
+            Kategorien = Kategorien.Distinct().ToList();
         }
     }
 }

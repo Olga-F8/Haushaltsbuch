@@ -9,29 +9,40 @@ namespace Haushaltsbuch
 
     internal class User
     {
+        public int ID { get; set; }
+
         public string NAME { get; set; }
         public string PASSWORT { get; set; }
+        public static int AktuellerUserID { get; set; }
 
         public static List<User> users = new List<User>();
-        public static List<Eintrag> Eintraege = new List<Eintrag>();
 
-        public User(string name, string passwort)
+        public User(int id, string name, string passwort)
         {
+            ID = id;
             NAME = name;
             PASSWORT = passwort;
         }
 
         public static void UserErstellen()
         {
+            int id;
             Console.WriteLine("Geben Sie Ihren Namen ein:");
             string name = Console.ReadLine();
             Console.WriteLine("Geben Sie Ihr Passwort ein:");
             string passwort = Console.ReadLine();
-            User user = new User(name, passwort);
+            if (users.Count == 0)
+                id = 1;
+            else
+                id = users[users.Count-1].ID + 1;
+
+            User user = new User(id, name, passwort);
+            users.Add(user);
+            Json.JsonSpeichern(users, KategorieClass.Kategorien, Eintrag.Eintraege);
             Console.WriteLine("Benutzer erstellt: " + user.NAME);
         }
 
-        public static void UserLogin()
+        public static int UserLogin()
         {
             Console.WriteLine("Geben Sie Ihren Namen ein:");
             string name = Console.ReadLine();
@@ -42,10 +53,12 @@ namespace Haushaltsbuch
                 if (user.NAME == name && user.PASSWORT == passwort)
                 {
                     Console.WriteLine("Login erfolgreich: " + user.NAME);
-                    return;
+                    AktuellerUserID = user.ID;
+                    return user.ID;
                 }
             }
             Console.WriteLine("Login fehlgeschlagen");
+            return 0;
         }
 
 
@@ -54,10 +67,10 @@ namespace Haushaltsbuch
         {
             Console.WriteLine("Geben Sie den Namen ein:");
             string name = Console.ReadLine();
-            
-            foreach(User user in users)
+
+            foreach (User user in users)
             {
-                if(user.NAME == name)
+                if (user.NAME == name)
                 {
                     users.Remove(user);
                     Console.WriteLine("Benutzer gelöscht: " + user.NAME);
@@ -69,12 +82,12 @@ namespace Haushaltsbuch
         public static void UserAnzeigen()
         {
             Console.WriteLine("Benutzer:");
-            foreach(User user in users)
+            foreach (User user in users)
             {
                 Console.WriteLine("Name: " + user.NAME + " Passwort: " + user.PASSWORT);
             }
         }
 
-       
+
     }
 }

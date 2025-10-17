@@ -1,11 +1,14 @@
 ﻿using System.Security.Cryptography.X509Certificates;
 
 namespace Haushaltsbuch
-{
-    internal class Program
-    {
-        static void Main(string[] args)
+{      
+
+    public class Program
+    {              
+
+       public static void Main(string[] args)
         {
+            Json.JsonLaden(ref User.users, ref KategorieClass.Kategorien, ref Eintrag.Eintraege);
             WillkomenMenue();
 
         }
@@ -26,8 +29,10 @@ namespace Haushaltsbuch
                     switch (eingabe)
                     {
                         case 1:
-                            User.UserLogin();
-                            Hauptmenue();
+                            if (User.UserLogin() == 0)
+                                break;
+                            else
+                                Hauptmenue();                            
                             break;
                         case 2:
                             User.UserErstellen();
@@ -55,7 +60,7 @@ namespace Haushaltsbuch
                 Console.WriteLine("***Hauptmenü***\n");
                 Console.WriteLine("1. Einträge verwalten: hinzufügen, bearbeiten, löschen");
                 Console.WriteLine("2. Statistik, Filter");
-                Console.WriteLine("3. Beenden\n");
+                Console.WriteLine("3. Logout\n");
                 Console.Write("Bitte eine Zahl eingeben: ");
                 var eingabe_check = int.TryParse(Console.ReadLine(), out int eingabe);
                 if (eingabe_check)
@@ -70,6 +75,9 @@ namespace Haushaltsbuch
                             break;
                         case 3:
                             return;
+                            //Console.WriteLine("Bis zum nächten mal!");
+                            //Environment.Exit(0);
+                            break;
                         default:
                             Console.WriteLine("Ungültige Eingabe. Bitte eine Zahl zwischen 1 und 3 eingeben.");
                             break;
@@ -91,7 +99,7 @@ namespace Haushaltsbuch
                 Console.Clear();
                 Console.WriteLine("***Einträge verwalten***\n");
                 Console.WriteLine("1. Eintrag hinzufügen");
-                Console.WriteLine("2. Eintrag bearbeiten");
+                Console.WriteLine("2. Eintrag anzeigen");
                 Console.WriteLine("3. Eintrag löschen");
                 Console.WriteLine("4. Zurück\n");
                 Console.Write("Bitte eine Zahl eingeben: ");
@@ -102,17 +110,16 @@ namespace Haushaltsbuch
                     switch (eingabe)
                     {
                         case 1:
-                            //EintragHinzufügen();
+                          Eintrag.EintragHinzufuegen();
                             break;
                         case 2:
-                           // EintragBearbeiten();
+                            Eintrag.EintraegeAnzeigen();
                             break;
                         case 3:
-                           //Eintrag löschen
+                            Eintrag.EintragLoeschen();
                             break;
                             case 4:
-                            Hauptmenue(); 
-                            break;
+                            return;
                         default:
                             Console.WriteLine("Ungültige Eingabe. Bitte eine Zahl zwischen 1 und 3 eingeben.");
                             break;
@@ -147,14 +154,13 @@ namespace Haushaltsbuch
                     switch (eingabe)
                     {
                         case 1:
-                           // Statistik();
+                            Statistik.StatistikAnzeigen();
                             break;
                         case 2:
-                            //Filter();
+                            //Filter
                             break;
                         case 3:
-                            Hauptmenue();
-                            break;
+                            return;
                         default:
                             Console.WriteLine("Ungültige Eingabe. Bitte eine Zahl zwischen 1 und 3 eingeben.");
                             break;

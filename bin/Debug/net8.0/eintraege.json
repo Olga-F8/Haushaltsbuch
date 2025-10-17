@@ -1,0 +1,107 @@
+[
+    {
+        "UserId": 1,
+        "Betrag": 5.9,
+        "Kategorie": "Lebensmittel",
+        "Datum": "0001-01-01T00:00:00",
+        "Typ": null
+    },
+    {
+        "UserId": 2,
+        "Betrag": 2.99,
+        "Kategorie": "Fahrkosten",
+        "Datum": "0001-01-01T00:00:00",
+        "Typ": null
+    },
+    {
+        "UserId": 1,
+        "Betrag": 2.99,
+        "Kategorie": "Fahrkosten",
+        "Datum": "0001-01-01T00:00:00",
+        "Typ": null
+    },
+    {
+        "UserId": 1,
+        "Betrag": 2.99,
+        "Kategorie": "Lebensmittel",
+        "Datum": "0001-01-01T00:00:00",
+        "Typ": null
+    },
+    {
+        "UserId": 1,
+        "Betrag": 3.99,
+        "Kategorie": "Sonstiges",
+        "Datum": "0001-01-01T00:00:00",
+        "Typ": null
+    },
+    {
+        "UserId": 1,
+        "Betrag": 900,
+        "Kategorie": "Miete",
+        "Datum": "0001-01-01T00:00:00",
+        "Typ": null
+    },
+    {
+        "UserId": 1,
+        "Betrag": 30,
+        "Kategorie": "Freizeit",
+        "Datum": "0001-01-01T00:00:00",
+        "Typ": null
+    },
+    {
+        "UserId": 1,
+        "Betrag": 85,
+        "Kategorie": "Freizeit",
+        "Datum": "0001-01-01T00:00:00",
+        "Typ": null
+    },
+    {
+        "UserId": 1,
+        "Betrag": 60,
+        "Kategorie": "Geburtstagsgeschenk",
+        "Datum": "0001-01-01T00:00:00",
+        "Typ": null
+    },
+    {
+        "UserId": 1,
+        "Betrag": 15.99,
+        "Kategorie": "Schulsachen",
+        "Datum": "0001-01-01T00:00:00",
+        "Typ": null
+    },
+    {
+        "UserId": 1,
+        "Betrag": 39.99,
+        "Kategorie": "Kleidung",
+        "Datum": "2025-10-17T00:00:00",
+        "Typ": "Ausgabe"
+    },
+    {
+        "UserId": 1,
+        "Betrag": 23.99,
+        "Kategorie": "Lebensmittel",
+        "Datum": "2025-10-17T00:00:00",
+        "Typ": "Ausgabe"
+    },
+    {
+        "UserId": 1,
+        "Betrag": 2.99,
+        "Kategorie": "Freizeit",
+        "Datum": "2025-10-17T00:00:00",
+        "Typ": "Ausgabe"
+    },
+    {
+        "UserId": 1,
+        "Betrag": 1.99,
+        "Kategorie": "Lebensmittel",
+        "Datum": "2017-10-20T00:00:00",
+        "Typ": "Ausgabe"
+    },
+    {
+        "UserId": 1,
+        "Betrag": 1.99,
+        "Kategorie": "Fahrkosten",
+        "Datum": "2025-10-17T00:00:00",
+        "Typ": "Ausgabe"
+    }
+]

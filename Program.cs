@@ -1,4 +1,6 @@
-﻿using System.Security.Cryptography.X509Certificates;
+﻿using System.Reflection;
+using System.Security.Cryptography.X509Certificates;
+using PdfSharp.Fonts;
 
 
 // git add .
@@ -14,6 +16,12 @@ namespace Haushaltsbuch
 
         public static void Main(string[] args)
         {
+            GlobalFontSettings.FontResolver = new EmbeddedFontResolver();
+            //var asm = Assembly.GetExecutingAssembly();
+            //foreach (var res in asm.GetManifestResourceNames())
+            //{
+            //    Console.WriteLine(res);
+            //}
             Json.JsonLaden(ref User.users, ref KategorieClass.Kategorien, ref Eintrag.Eintraege);
             WillkomenMenue();
         }
@@ -23,7 +31,10 @@ namespace Haushaltsbuch
             while (true)
             {
                 Console.Clear();
-                Console.WriteLine("***Willkomen zu Haushaltsbuch***\n");
+                Console.WriteLine("================================");
+                Console.WriteLine("Willkomen zu Haushaltsbuch");
+                Console.WriteLine("================================\n");
+
                 Console.WriteLine("1. Anmeldung");
                 Console.WriteLine("2. Registrierung\n");
                 Console.Write("Bitte 1 oder 2 eingeben: ");
@@ -34,15 +45,24 @@ namespace Haushaltsbuch
                     switch (eingabe)
                     {
                         case 1:
+                            Console.Clear();
+                            Console.WriteLine("================================");
+                            Console.WriteLine("Anmeldung:");
+                            Console.WriteLine("================================\n");
+
                             if (User.UserLogin() == 0)
                                 break;
                             else
                             {
-                                Console.WriteLine(User.AktuellerUserID); Console.ReadKey();
+                                //Console.WriteLine(User.AktuellerUserID); Console.ReadKey();
                                 Hauptmenue();
                             }
                             break;
                         case 2:
+                            Console.Clear();
+                            Console.WriteLine("================================");
+                            Console.WriteLine("Registrierung:");
+                            Console.WriteLine("================================\n");
                             User.UserErstellen();
                             break;
                         default:
@@ -58,28 +78,57 @@ namespace Haushaltsbuch
                 Console.ReadKey();
             }
         }
+
+        //bearbeiten coden
         public static void Hauptmenue()
         {
             while (true)
             {
                 Console.Clear();
-                Console.WriteLine("***Hauptmenü***\n");
-                Console.WriteLine("1. Einträge verwalten: hinzufügen, bearbeiten, löschen");
-                Console.WriteLine("2. Statistik, Filter, Ausgabenlimit einstellen");
-                Console.WriteLine("3. Logout\n");
+                Console.WriteLine("================================");
+                Console.WriteLine("Hauptmenü");
+                Console.WriteLine("================================\n");
+                Console.WriteLine("1. Eintrag hinzufügen\n" +
+                                  "2. Eintrag bearbeiten\n" +
+                                  "3. Eintrag löschen\n" +
+                                  "4. Einträge anzeigen");
+                Console.WriteLine("5. Gesamtausgabe anzeigen\n" +
+                                  "6. Filter einsetzen\n" +
+                                  "7. Ausgabenlimit einstellen");
+                Console.WriteLine("8. Ausgabenliste als .pdf spreichern");
+                Console.WriteLine("9. Logout\n");
                 Console.Write("Bitte eine Zahl eingeben: ");
                 var eingabe_check = int.TryParse(Console.ReadLine(), out int eingabe);
                 if (eingabe_check)
                 {
                     switch (eingabe)
                     {
+
                         case 1:
-                            EintraegeVerwaltungMenue();
+                            Eintrag.EintragHinzufuegen();
                             break;
                         case 2:
-                            StatistikFilterMenue();
+                            Eintrag.EintragBearbeiten();
                             break;
                         case 3:
+                            Eintrag.EintragLoeschen();
+                            break;
+                        case 4:
+                            Eintrag.EintraegeAnzeigen();
+                            break;
+                        case 5:
+                            Statistik.GesamtausgabenAnzeigen();
+                            break;
+                        case 6:
+                            Statistik.KategorieAusgabenAnzeigen();
+                            break;
+                        case 7:
+                            Statistik.AusgabenLimitAnzeigen();
+                            break;
+                        case 8:
+                            Statistik.ExportToPdf(Eintrag.Eintraege, "Haushalt.pdf"); ;
+                            break;
+                        case 9:
                             User.AktuellerUserID = 0;
                             return;
                         //Console.WriteLine("Bis zum nächten mal!");
@@ -94,10 +143,12 @@ namespace Haushaltsbuch
                 {
                     Console.WriteLine("Ungültige Eingabe. Bitte eine Zahl eingeben.");
                 }
-                Console.WriteLine("Drücken Sie eine Taste, um fortzufahren...");
+                Console.WriteLine("\nDrücken Sie eine Taste, um fortzufahren...");
                 Console.ReadKey();
             }
         }
+
+        /*
         public static void EintraegeVerwaltungMenue()
 
         {
@@ -141,8 +192,6 @@ namespace Haushaltsbuch
             }
         }
 
-
-
         public static void StatistikFilterMenue()
 
         {
@@ -153,7 +202,8 @@ namespace Haushaltsbuch
                 Console.WriteLine("1. Gesamtausgaben anzeigen");
                 Console.WriteLine("2. Ausgaben nach Kategorie anzeigen");
                 Console.WriteLine("3. Ausgabenlimit einstellen");
-                Console.WriteLine("4. Zurück\n");
+                                Console.WriteLine("4. Ausgabenliste als .pdf spreichern");
+Console.WriteLine("5. Zurück\n");
                 Console.Write("Bitte eine Zahl eingeben: ");
 
                 var eingabe_check = int.TryParse(Console.ReadLine(), out int eingabe);
@@ -171,6 +221,9 @@ namespace Haushaltsbuch
                             Statistik.AusgabenLimitAnzeigen();
                             break;
                         case 4:
+                            Statistik.ExportToPdf(Eintrag.Eintraege, "Haushalt.pdf"); ;
+                            break; 
+                        case 5:
                             return;
                         default:
                             Console.WriteLine("Ungültige Eingabe. Bitte eine Zahl zwischen 1 und 3 eingeben.");
@@ -185,7 +238,7 @@ namespace Haushaltsbuch
                 Console.ReadKey();
             }
         }
-
+        */
 
     }
 }

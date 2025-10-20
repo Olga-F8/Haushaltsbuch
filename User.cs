@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Media;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -50,21 +51,51 @@ namespace Haushaltsbuch
             Console.WriteLine("Geben Sie Ihren Namen ein:");
             string name = Console.ReadLine();
             Console.WriteLine("Geben Sie Ihr Passwort ein:");
-            string passwort = Console.ReadLine();
+            string passwort = ReadPassword();
             foreach (User user in users)
             {
                 if (user.NAME == name && user.PASSWORT == passwort)
                 {
+                    SoundPlayer player_s = new SoundPlayer("success.wav");
+                    player_s.Play();
                     Console.WriteLine("Login erfolgreich: " + user.NAME);
                     AktuellerUserID = user.ID;
 
                     return AktuellerUserID;
                 }
             }
+            SoundPlayer player_e = new SoundPlayer("error.wav");
+            player_e.Play();
             Console.WriteLine("Login fehlgeschlagen");
             return 0;
         }
 
+        private static string ReadPassword()
+        {
+            string password = string.Empty;
+            ConsoleKeyInfo keyInfo;
+
+            do
+            {
+                keyInfo = Console.ReadKey(intercept: true); // kein Echo der Taste
+                if (keyInfo.Key == ConsoleKey.Backspace)
+                {
+                    if (password.Length > 0)
+                    {
+                        password = password[0..^1]; // letztes Zeichen löschen
+                        Console.Write("\b \b"); // Stern entfernen
+                    }
+                }
+                else if (keyInfo.Key != ConsoleKey.Enter)
+                {
+                    password += keyInfo.KeyChar;
+                    Console.Write("*");
+                }
+            } while (keyInfo.Key != ConsoleKey.Enter);
+
+            Console.WriteLine();
+            return password;
+        }
 
         //nachdenken ob löschen und anzeigen Methode erforderlich ist
         public static void UserLoeschen()

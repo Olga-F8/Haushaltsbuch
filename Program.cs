@@ -54,7 +54,7 @@ namespace Haushaltsbuch
                                 break;
                             else
                             {
-                                //Console.WriteLine(User.AktuellerUserID); Console.ReadKey();
+                               
                                 Hauptmenue();
                             }
                             break;
@@ -79,12 +79,13 @@ namespace Haushaltsbuch
             }
         }
 
-        //bearbeiten coden
         public static void Hauptmenue()
         {
             while (true)
             {
                 Console.Clear();
+                Statistik.BlauText("Willkomen im Hauptmenü, " + User.users.FirstOrDefault(u => u.ID == User.AktuellerUserID)?.NAME + "!\n");
+
                 Console.WriteLine("================================");
                 Console.WriteLine("Hauptmenü");
                 Console.WriteLine("================================\n");
@@ -92,11 +93,9 @@ namespace Haushaltsbuch
                                   "2. Eintrag bearbeiten\n" +
                                   "3. Eintrag löschen\n" +
                                   "4. Einträge anzeigen");
-                Console.WriteLine("5. Gesamtausgabe anzeigen\n" +
-                                  "6. Filter einsetzen\n" +
-                                  "7. Ausgabenlimit einstellen");
-                Console.WriteLine("8. Ausgabenliste als .pdf spreichern");
-                Console.WriteLine("9. Logout\n");
+                Console.WriteLine("5. Filter einsetzen\n" +
+                                  "6. Ausgabenlimit einstellen");
+                Console.WriteLine("7. Logout\n");
                 Console.Write("Bitte eine Zahl eingeben: ");
                 var eingabe_check = int.TryParse(Console.ReadLine(), out int eingabe);
                 if (eingabe_check)
@@ -117,18 +116,33 @@ namespace Haushaltsbuch
                             Eintrag.EintraegeAnzeigen();
                             break;
                         case 5:
-                            Statistik.GesamtausgabenAnzeigen();
+                            Console.Clear();
+                           // Eintrag.UserListeladen();
+                            Statistik.FilterEisetzen(Statistik.GefilterteEintraege);
                             break;
                         case 6:
-                            Statistik.KategorieAusgabenAnzeigen();
-                            break;
-                        case 7:
                             Statistik.AusgabenLimitAnzeigen();
                             break;
-                        case 8:
-                            Statistik.ExportToPdf(Eintrag.Eintraege, "Haushalt.pdf"); ;
-                            break;
-                        case 9:
+                        //case 7:
+                        //    //diese methode soll lieber gelöscht werden
+
+
+
+
+
+                        //    var aktuellerUser = User.users.FirstOrDefault(u => u.ID == User.AktuellerUserID);
+                        //    if (aktuellerUser != null)
+                        //    {
+                        //        string dateiname = $"Haushalt_{aktuellerUser.NAME}_{DateTime.Now.ToShortDateString()}.pdf";
+                        //        Statistik.ExportToPdf(Eintrag.Eintraege, dateiname);
+                        //    }
+                        //    else
+                        //    {
+                        //        Statistik.ExportToPdf(Eintrag.Eintraege, $"Haushalt_Unbekannt_{DateTime.Now.ToShortDateString()}.pdf");
+                        //    }
+                        //    //Statistik.ExportToPdf(Eintrag.Eintraege, "Haushalt.pdf");
+                        //    break;
+                        case 7:
                             User.AktuellerUserID = 0;
                             return;
                         //Console.WriteLine("Bis zum nächten mal!");

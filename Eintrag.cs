@@ -18,7 +18,7 @@ namespace Haushaltsbuch
         public DateTime Datum { get; set; }
         public string Typ { get; set; }
         public static List<Eintrag> Eintraege = new List<Eintrag>();
-
+        public static List<Eintrag> UserEintragListe = new List<Eintrag>();
         public static int count = 0;
 
 
@@ -97,7 +97,7 @@ namespace Haushaltsbuch
             SoundPlayer player_s = new SoundPlayer("success.wav");
             player_s.Play();
             Console.WriteLine("Eintrag erfolgreich hinzugefügt!\n");
-            Statistik.GesamtausgabenBerechen();
+            Statistik.MonatlicheGesamtausgabenBerechen();
             Statistik.AusgabenLimitPruefen();
 
         }
@@ -107,40 +107,50 @@ namespace Haushaltsbuch
             SoundPlayer player_e = new SoundPlayer("error.wav");
 
             string auswahl_bearbeiten = "";
-            EintraegeAnzeigen();
+            int count1 = 0;
+            count1 = EintraegeAnzeigen();
             Console.WriteLine();
             Console.Write("Geben Sie die Nummer des Eintrags ein, den Sie bearbeiten möchten: ");
             var nummer_check = int.TryParse(Console.ReadLine(), out int nummer);
-            if (nummer_check)
+            if (nummer <= count1)
             {
-                Console.WriteLine("Was möchsten Sie ändern:");
-                Console.WriteLine("1. Betrag\n2. Kategorie\n3. Datum\n4. Typ");
-                var auswahl_check = int.TryParse(Console.ReadLine(), out int auswahl);
-                if (auswahl_check)
+                if (nummer_check)
                 {
-                    switch (auswahl)
+                    Console.WriteLine("Was möchsten Sie ändern:");
+                    Console.WriteLine("1. Betrag\n2. Kategorie\n3. Datum\n4. Typ");
+                    var auswahl_check = int.TryParse(Console.ReadLine(), out int auswahl);
+                    if (auswahl_check)
                     {
-                        case 1:
-                            auswahl_bearbeiten = "Betrag";
-                            EintragAendern(nummer, auswahl_bearbeiten);
-                            break;
-                        case 2:
-                            auswahl_bearbeiten = "Kategorie";
-                            EintragAendern(nummer, auswahl_bearbeiten);
-                            break;
-                        case 3:
-                            auswahl_bearbeiten = "Datum";
-                            EintragAendern(nummer, auswahl_bearbeiten);
-                            break;
-                        case 4:
-                            auswahl_bearbeiten = "Typ";
-                            EintragAendern(nummer, auswahl_bearbeiten);
-                            break;
-                        default:
-                            player_e.Play();
-                            Console.WriteLine("Falsche Eingabe!");
-                            return;
+                        switch (auswahl)
+                        {
+                            case 1:
+                                auswahl_bearbeiten = "Betrag";
+                                EintragAendern(nummer, auswahl_bearbeiten);
+                                break;
+                            case 2:
+                                auswahl_bearbeiten = "Kategorie";
+                                EintragAendern(nummer, auswahl_bearbeiten);
+                                break;
+                            case 3:
+                                auswahl_bearbeiten = "Datum";
+                                EintragAendern(nummer, auswahl_bearbeiten);
+                                break;
+                            case 4:
+                                auswahl_bearbeiten = "Typ";
+                                EintragAendern(nummer, auswahl_bearbeiten);
+                                break;
+                            default:
+                                player_e.Play();
+                                Console.WriteLine("Falsche Eingabe!");
+                                return;
 
+                        }
+                    }
+                    else
+                    {
+                        player_e.Play();
+                        Console.WriteLine("Falsche Eingabe!");
+                        return;
                     }
                 }
                 else
@@ -150,12 +160,17 @@ namespace Haushaltsbuch
                     return;
                 }
             }
+            else
+            {
+                player_e.Play();
+                Console.WriteLine("Falsche Eingabe!");
+                return;
+            }
         }
         public static void EintragAendern(int nummer, string auswahl_bearbeiten)
         {
             int count1 = 0;
             SoundPlayer player_e = new SoundPlayer("error.wav");
-            player_e.Play();
             foreach (var eintrag in Eintraege)
             {
                 if (eintrag.UserId == User.AktuellerUserID)
@@ -165,7 +180,7 @@ namespace Haushaltsbuch
                     {
                         if (eintrag != null)
                         {
-                            if(auswahl_bearbeiten=="Betrag")
+                            if (auswahl_bearbeiten == "Betrag")
                             {
                                 Console.Write("Geben Sie den neuen Betrag ein: ");
                                 var betrag_check = double.TryParse(Console.ReadLine(), out double neuer_betrag);
@@ -177,13 +192,13 @@ namespace Haushaltsbuch
                                 }
                                 eintrag.Betrag = neuer_betrag;
                             }
-                            else if(auswahl_bearbeiten=="Kategorie")
+                            else if (auswahl_bearbeiten == "Kategorie")
                             {
                                 Console.Write("Geben Sie die neue Kategorie ein: ");
                                 string neue_kategorie = Console.ReadLine() ?? "";
                                 eintrag.Kategorie = neue_kategorie;
                             }
-                            else if(auswahl_bearbeiten=="Datum")
+                            else if (auswahl_bearbeiten == "Datum")
                             {
                                 Console.Write("Geben Sie das neue Datum ein (yyyy-MM-dd): ");
                                 var datum_check = DateTime.TryParse(Console.ReadLine(), out DateTime neues_datum);
@@ -195,7 +210,7 @@ namespace Haushaltsbuch
                                 }
                                 eintrag.Datum = neues_datum;
                             }
-                            else if(auswahl_bearbeiten=="Typ")
+                            else if (auswahl_bearbeiten == "Typ")
                             {
                                 Console.Write("Geben Sie den neuen Typ ein (Einnahme/Ausgabe): ");
                                 string neuer_typ = Console.ReadLine() ?? "Ausgabe";
@@ -223,8 +238,31 @@ namespace Haushaltsbuch
                 }
             }
         }
-        public static void EintraegeAnzeigen()
+
+        public static List<Eintrag> UserListeladen()
         {
+            UserEintragListe.Clear(); //von ki empfohlen
+            int count = 0;
+            
+            foreach (Eintrag eintrag in Eintraege)
+            {
+                if (eintrag.UserId == User.AktuellerUserID)
+                {
+                    count++;
+                    UserEintragListe.Add(eintrag);
+                   // Console.WriteLine($"{count}. Betrag: {eintrag.Betrag}, Kategorie: {eintrag.Kategorie}, Datum: {eintrag.Datum.ToShortDateString()}, Typ: {eintrag.Typ}");
+                }
+            }
+            
+            //foreach (var eintrag in UserEintragListe)
+            //{
+            //    Console.WriteLine($"{eintrag.Betrag}, {eintrag.Kategorie}, {eintrag.Datum.ToShortDateString()}, {eintrag.Typ}");
+            //}
+            return UserEintragListe;
+        }
+        public static int EintraegeAnzeigen()
+        {
+            UserEintragListe.Clear(); // von ki empfohlen
             count = 0;
             Console.Clear();
             Console.WriteLine("================================");
@@ -234,21 +272,22 @@ namespace Haushaltsbuch
             if (Eintraege.Count == 0)
             {
                 Console.WriteLine("Keine Einträge vorhanden.");
-                return;
+                return 0;
             }
             foreach (var eintrag in Eintraege)
             {
                 if (eintrag.UserId == User.AktuellerUserID)
                 {
                     count++;
+                    UserEintragListe.Add(eintrag);
                     Console.WriteLine($"{count}. Betrag: {eintrag.Betrag}, Kategorie: {eintrag.Kategorie}, Datum: {eintrag.Datum.ToShortDateString()}, Typ: {eintrag.Typ}");
                 }
             }
             if (count == 0)
             {
-
                 Console.WriteLine("Keine Einträge vorhanden.");
             }
+            return count;
         }
 
         //prüfen ob richtige eintrag gelöscht wird

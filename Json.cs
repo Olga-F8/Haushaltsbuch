@@ -37,7 +37,7 @@ namespace Haushaltsbuch
             var text = System.Text.Json.JsonSerializer.Serialize(users);
             File.WriteAllText("users.json", text);
 
-            kategorie = KategorieClass.Kategorien;
+            
             text = System.Text.Json.JsonSerializer.Serialize(kategorie);
             File.WriteAllText("kategorie.json", text);
             text = System.Text.Json.JsonSerializer.Serialize(eintraege);

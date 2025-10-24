@@ -49,7 +49,7 @@ namespace Haushaltsbuch
         public static int UserLogin()
         {
             Console.WriteLine("Geben Sie Ihren Namen ein:");
-            string name = Console.ReadLine();
+            string name = Console.ReadLine()??"";
             Console.WriteLine("Geben Sie Ihr Passwort ein:");
             string passwort = ReadPassword();
             foreach (User user in users)

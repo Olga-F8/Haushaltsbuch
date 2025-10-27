@@ -21,6 +21,9 @@ namespace Haushaltsbuch
 
         public static double Kategoriesumme { get; set; }
         public static bool ausgabenlimit_check = false;
+        public static string kategorie_filter = "";
+        public static string monat_filter = "";
+        public static string jahr_filter = "";
 
         public static List<Eintrag> GefilterteEintraege = Eintrag.UserListeladen();
         public static double GesamtausgabenBerechen()
@@ -44,7 +47,7 @@ namespace Haushaltsbuch
 
             foreach (Eintrag eintrag in Eintrag.Eintraege)
             {
-                if (eintrag.UserId == User.AktuellerUserID && eintrag.Datum.Month == DateTime.Now.Month)
+                if (eintrag.UserId == User.AktuellerUserID && eintrag.Datum.Month == DateTime.Now.Month && eintrag.Datum.Year == DateTime.Now.Year)
                 {
                     MonatlicheGesamtausgaben += eintrag.Betrag;
                 }
@@ -54,98 +57,113 @@ namespace Haushaltsbuch
             return MonatlicheGesamtausgaben;
         }
 
-        public static List<Eintrag> FilterEisetzen(List<Eintrag> gefilterteListe)
+        public static List<Eintrag> FilterEinsetzen(List<Eintrag> gefilterteListe)
         {
-            Console.Clear();
-            Console.WriteLine("Filteroptionen:");
-            Console.WriteLine("1. Nach Monat filtern");
-            Console.WriteLine("2. Nach Jahr filtern");
-            Console.WriteLine("3. Nach Kategorie filtern");
-            Console.WriteLine("4. Filterzurücksetzen");
-            Console.WriteLine("5. Als .pdf Datei speichern");
-            Console.WriteLine("6. Die Liste ausdrucken");
-
-
-            GefilterteEintraegeAnzeigen();
-            Console.Write("\nWählen Sie eine Option (1-3): ");
-            var eingabe_check = int.TryParse(Console.ReadLine(), out int eingabe);
-            if (!eingabe_check || eingabe < 1 || eingabe > 6)
+            bool logout = false;
+            do 
             {
-                Console.WriteLine("Ungültige Eingabe. Bitte eine Zahl zwischen 1 und 3 eingeben.");
+                Console.Clear();
+                Console.WriteLine("Filteroptionen:");
+                Console.WriteLine("1. Einträge von heute anzeigen");
+                Console.WriteLine("2. Nach Monat filtern");
+                Console.WriteLine("3. Nach Jahr filtern");
+                Console.WriteLine("4. Nach Kategorie filtern");
+                Console.WriteLine("5. Filterzurücksetzen");
+                Console.WriteLine("6. Als .pdf Datei speichern");
+                Console.WriteLine("7. Die Liste ausdrucken");
+                Console.WriteLine("8. Zurück");
+
+
+                GefilterteEintraegeAnzeigen();
+                Console.Write("\nWählen Sie eine Option (1-8): ");
+                var eingabe_check = int.TryParse(Console.ReadLine(), out int eingabe);
+                if (!eingabe_check || eingabe < 1 || eingabe > 8)
+                {
+                    Console.WriteLine("Ungültige Eingabe. Bitte eine Zahl zwischen 1 und 8 eingeben.");
+                    return gefilterteListe;
+                }
+                switch (eingabe)
+                {
+                    case 1:
+                        FilternNachTag();
+                        FilterEinsetzen(gefilterteListe);
+                        break;
+                    case 2:
+                        Console.Write("Geben Sie den Monat (1-12) ein: ");
+                        var monat_check = int.TryParse(Console.ReadLine(), out int monat);
+                        if (monat_check && monat > 0 && monat < 13)
+                        {
+                            FilternNachMonat(monat);
+                            gefilterteListe = GefilterteEintraege;
+                            Console.Clear();
+                            FilterEinsetzen(gefilterteListe);
+                        }
+                        else
+                            RedText("Falsche Eingabe!");
+                        break;
+                    case 3:
+                        Console.Write("Geben Sie das Jahr (z.B. 2025) ein: ");
+                        var jahr_only_check = int.TryParse(Console.ReadLine(), out int jahr_only);
+                        if (!jahr_only_check)
+                        {
+                            RedText("Falsche Eingabe!");
+                        }
+                        FilternNachJahr(jahr_only);
+                        gefilterteListe = GefilterteEintraege;
+                        Console.Clear();
+                        FilterEinsetzen(gefilterteListe);
+
+                        break;
+                    case 4:
+                        Console.Write("Geben Sie die Kategorie ein: ");
+                        string kategorie = Console.ReadLine();
+                        if (KategorieClass.Kategorien.All(kat => kat.NAME != kategorie))
+                        {
+                           RedText("Kategorie existiert nicht!");
+                        }
+                        FilternNachKategorie(kategorie);
+                        
+                        gefilterteListe = GefilterteEintraege;
+                        Console.Clear();
+                        FilterEinsetzen(gefilterteListe);
+                        break;
+                    case 5:
+                        gefilterteListe = FilterZuruecksetzen();
+                        FilterEinsetzen(gefilterteListe);
+
+                        return gefilterteListe;
+                    case 6:
+                        var aktuellerUser = User.users.FirstOrDefault(u => u.ID == User.AktuellerUserID);
+                        string dateiname = $"Einträge_{aktuellerUser.NAME}_{DateTime.Now.ToShortDateString()}.pdf";
+
+                        if (aktuellerUser != null)
+                            ExportToPdf(gefilterteListe, dateiname);
+                       break;
+                    case 7:
+                        var aktuellerUser1 = User.users.FirstOrDefault(u => u.ID == User.AktuellerUserID);
+                        string dateiname1;
+                        if (monat_filter == "" && jahr_filter == "" && kategorie_filter == "")
+                            dateiname1 = $"Alle_Einträge_{aktuellerUser1.NAME}_{DateTime.Now.ToShortDateString()}.pdf";
+                        else
+                            dateiname1 = $"Einträge_mit_Filter_{monat_filter}_{jahr_filter}_{kategorie_filter}_{aktuellerUser1.NAME}_{DateTime.Now.ToShortDateString()}.pdf";
+                        if (aktuellerUser1 != null && File.Exists(dateiname1))
+                            DruckenEintraege(dateiname1);
+                        else
+                        {
+                            ExportToPdf(gefilterteListe, dateiname1);
+                            DruckenEintraege(dateiname1);
+                        }
+                        return gefilterteListe;
+                        case 8:
+                        logout = true;
+                        break;
+                    default:
+                        Statistik.RedText("Ungültige Eingabe. Bitte eine Zahl zwischen 1 und 8 eingeben.");
+                       break;
+                }
                 return gefilterteListe;
             }
-            switch (eingabe)
-            {
-                case 1:
-                    Console.Write("Geben Sie den Monat (1-12) ein: ");
-                    var monat_check = int.TryParse(Console.ReadLine(), out int monat);
-                    if (monat_check && monat > 0 && monat < 13)
-                    {
-                        FilternNachMonat(monat);
-                        GefilterteEintraegeAnzeigen();
-                        gefilterteListe = GefilterteEintraege;
-                        FilterEisetzen(gefilterteListe);
-
-                    }
-                    else
-                        Console.WriteLine("Falsche Eingabe!");
-
-                    break;
-                case 2:
-                    Console.Write("Geben Sie das Jahr (z.B. 2025) ein: ");
-                    var jahr_only_check = int.TryParse(Console.ReadLine(), out int jahr_only);
-                    if (!jahr_only_check)
-                    {
-                        Console.WriteLine("Falsche Eingabe!");
-                        return gefilterteListe;
-                    }
-                    FilternNachJahr(jahr_only);
-                    GefilterteEintraegeAnzeigen();
-                    gefilterteListe = GefilterteEintraege;
-                    FilterEisetzen(gefilterteListe);
-
-                    break;
-                case 3:
-                    Console.Write("Geben Sie die Kategorie ein: ");
-                    string kategorie = Console.ReadLine();
-                    if (KategorieClass.Kategorien.All(kat => kat.NAME != kategorie))
-                    {
-                        Console.WriteLine("Kategorie existiert nicht!");
-                        return gefilterteListe;
-                    }
-
-                    FilternNachKategorie(kategorie);
-                    gefilterteListe = GefilterteEintraege;
-                    FilterEisetzen(gefilterteListe);
-                    break;
-                case 4:
-                    gefilterteListe = FilterZuruecksetzen();
-                    return gefilterteListe;
-                case 5:
-                    var aktuellerUser = User.users.FirstOrDefault(u => u.ID == User.AktuellerUserID);
-                    string dateiname = $"Einträge_{aktuellerUser.NAME}_{DateTime.Now.ToShortDateString()}.pdf";
-
-                    if (aktuellerUser != null)
-                    {
-                        Statistik.ExportToPdf(gefilterteListe, dateiname);
-                    }
-                    break;
-                case 6:
-                    var aktuellerUser1 = User.users.FirstOrDefault(u => u.ID == User.AktuellerUserID);
-                    string dateiname1 = $"Einträge_{aktuellerUser1.NAME}_{DateTime.Now.ToShortDateString()}.pdf";
-                    if (aktuellerUser1 != null)
-                    {
-                        //Statistik.ExportToPdf(gefilterteListe, dateiname);
-                        //string test = @"C:\Users\ForerOlga\source\repos\MeineProjekte1\Haushaltsbuch\bin\Debug\net8.0\Haushalt_Helena_20.10.2025.pdf";
-                        DruckenEintraege(dateiname1);
-                    }
-                    break;
-                default:
-                    Console.WriteLine("Ungültige Eingabe. Bitte eine Zahl zwischen 1 und 4 eingeben.");
-                    return gefilterteListe;
-            }
-
-            return gefilterteListe;
+            while (!logout) ;
         }
         public static void GefilterteEintraegeAnzeigen()
         {
@@ -162,18 +180,39 @@ namespace Haushaltsbuch
         {
             GefilterteEintraege.Clear();
             GefilterteEintraege = Eintrag.UserListeladen();
-            Console.WriteLine("Filter zurückgesetzt.");
+            monat_filter = "";
+            jahr_filter = "";
+            kategorie_filter = "";
+            Statistik.BlauText("Filter zurückgesetzt.");
             return GefilterteEintraege;
+        }
+        public static void FilternNachTag()
+        {
+            Gesamtausgaben = 0;
+            GefilterteEintraege.RemoveAll(e => e.Datum.Day != DateTime.Now.Day);
+            foreach (Eintrag eintrag in GefilterteEintraege)
+            {
+                Gesamtausgaben += eintrag.Betrag;
+            }
+            GefilterteEintraegeAnzeigen();
+            Gesamtausgaben = Math.Round(Gesamtausgaben, 2);
+            Console.WriteLine($"\nSie haben heute {Gesamtausgaben} Euro ausgegeben.");
+            Console.ReadKey();
         }
         public static List<Eintrag> FilternNachMonat(int monat)
         {
             Gesamtausgaben = 0;
             GefilterteEintraege.RemoveAll(e => e.Datum.Month != monat);
+            monat_filter = new DateTime(2025, monat, 1).ToString("MMMM", System.Globalization.CultureInfo.GetCultureInfo("de-DE"));
+
             foreach (Eintrag eintrag in GefilterteEintraege)
             {
                 Gesamtausgaben += eintrag.Betrag;
             }
+            GefilterteEintraegeAnzeigen();
+            Gesamtausgaben = Math.Round(Gesamtausgaben, 2);
             Console.WriteLine($"\nSie haben {Gesamtausgaben} Euro ausgegeben.");
+            Console.ReadKey();
             return GefilterteEintraege;
         }
         public static List<Eintrag> FilternNachJahr(int jahr)
@@ -181,11 +220,15 @@ namespace Haushaltsbuch
             Gesamtausgaben = 0;
 
             GefilterteEintraege.RemoveAll(e => e.Datum.Year != jahr);
+            jahr_filter = jahr.ToString();
             foreach (Eintrag eintrag in GefilterteEintraege)
             {
                 Gesamtausgaben += eintrag.Betrag;
             }
+            GefilterteEintraegeAnzeigen();
+            Gesamtausgaben = Math.Round(Gesamtausgaben, 2);
             Console.WriteLine($"\nSie haben {Gesamtausgaben} Euro ausgegeben.");
+            Console.ReadKey();
 
             return GefilterteEintraege;
         }
@@ -194,38 +237,39 @@ namespace Haushaltsbuch
         {
             Gesamtausgaben = 0;
             GefilterteEintraege.RemoveAll(e => e.Kategorie != kategorie);
+            kategorie_filter = kategorie;
             foreach (Eintrag eintrag in GefilterteEintraege)
             {
                 Gesamtausgaben += eintrag.Betrag;
             }
+            GefilterteEintraegeAnzeigen();
+            Gesamtausgaben = Math.Round(Gesamtausgaben, 2);
             Console.WriteLine($"\nSie haben {Gesamtausgaben} Euro ausgegeben.");
+            Console.ReadKey();
 
             return GefilterteEintraege;
         }
-        //public static void FilternNachKategorie()//(string kategorie)
-        //{
-        //    Kategoriesumme = 0;
-        //    int count = 0;
-        //    Console.WriteLine("\nKategorie / Betrag im Euro");
+        public static void SummeNachKategorie()//(string kategorie)
+        {
+            Kategoriesumme = 0;
+            int count = 0;
+            Console.WriteLine("\nKategorie / Betrag im Euro");
 
-        //    foreach (var kat in KategorieClass.Kategorien)
-        //    {
-        //        foreach (Eintrag eintrag in Eintrag.Eintraege)
-        //        {
-        //            if (eintrag.Kategorie == kat.NAME && eintrag.UserId == User.AktuellerUserID)
-        //            {
-        //                count++;
-        //                Kategoriesumme += eintrag.Betrag;
-        //            }
-        //        }
-        //        if (Kategoriesumme != 0)
-        //            Console.WriteLine($"{count} / {kat.NAME} / {Kategoriesumme}");
-        //        Kategoriesumme = 0;
-        //    }
+            foreach (var kat in KategorieClass.Kategorien)
+            {
+                foreach (Eintrag eintrag in Eintrag.Eintraege)
+                {
+                    if (eintrag.Kategorie == kat.NAME && eintrag.Datum.Month== DateTime.Now.Month && eintrag.Datum.Year== DateTime.Now.Year && eintrag.UserId == User.AktuellerUserID)
+                    {
+                        Kategoriesumme += eintrag.Betrag;
+                    }
+                }
+                if (Kategoriesumme != 0)
+                    Console.WriteLine($"{kat.NAME} / {Kategoriesumme}");
+                Kategoriesumme = 0;
+            }
 
-        //}
-
-        //option einbauen tägliche ausgaben, monatlichen ausgaben, jährliche ausgaben??
+        }
 
 
         public static void AusgabenLimitAnzeigen()
@@ -241,7 +285,7 @@ namespace Haushaltsbuch
                     }
                     else
                     {
-                        Console.WriteLine($"Ausgabenlimit: {user.AUSGABENLIMIT}");
+                        Console.WriteLine($"Monatliches Ausgabenlimit: {user.AUSGABENLIMIT}");
                         if (MonatlicheGesamtausgaben > user.AUSGABENLIMIT)
                         {
 
@@ -250,12 +294,14 @@ namespace Haushaltsbuch
                         }
                         else
                         {
-                            Console.Write($"Ausgaben im {DateTime.Now.ToString("MMMM")} {DateTime.Now.ToString("YYYY")}:   ");
+                            Console.Write($"Ausgaben im {DateTime.Now.ToString("MMMM")} {DateTime.Now.ToString("yyyy")}:   ");
                             BlauText(MonatlicheGesamtausgaben.ToString());
                         }
+
                     }
             }
-
+            SummeNachKategorie();
+            Console.WriteLine();
             Console.WriteLine("Wollen Sie Ausgabenlimit ändern (j/n)?\n");
             ConsoleKeyInfo eingabe = Console.ReadKey();
             switch (eingabe.KeyChar)
@@ -267,7 +313,7 @@ namespace Haushaltsbuch
                 case 'n':
                     return;
                 default:
-                    Console.WriteLine("\nUngültige Eingabe. Bitte 'j' oder 'n' eingeben.");
+                    Statistik.RedText("\nUngültige Eingabe. Bitte 'j' oder 'n' eingeben.");
                     break;
             }
             MonatlicheGesamtausgaben = 0;
@@ -280,7 +326,7 @@ namespace Haushaltsbuch
             ausgabenlimit_check = double.TryParse(Console.ReadLine(), out double ausgabenLimit);
             if (!ausgabenlimit_check)
             {
-                Console.WriteLine("Ungültige Eingabe. Bitte eine Zahl eingeben.");
+                Statistik.RedText("Ungültige Eingabe. Bitte eine Zahl eingeben.");
                 return;
             }
             else
@@ -293,7 +339,7 @@ namespace Haushaltsbuch
                         Json.JsonSpeichern(User.users, KategorieClass.Kategorien, Eintrag.Eintraege);
                         SoundPlayer player_s = new SoundPlayer("success.wav");
                         player_s.Play();
-                        Console.WriteLine("Ausgabenlimit Gespeichert!");
+                        Statistik.BlauText("Ausgabenlimit Gespeichert!");
                     }
                 }
             }
@@ -307,7 +353,7 @@ namespace Haushaltsbuch
                 {
                     if (MonatlicheGesamtausgaben > user.AUSGABENLIMIT)
                     {
-                        string warnung = $"Warnung: Ihre Ausgaben {Gesamtausgaben} haben das festgelegte monatlichen Limit von {user.AUSGABENLIMIT} überschritten!";
+                        string warnung = $"Warnung: Ihre Ausgaben {MonatlicheGesamtausgaben} haben das festgelegte monatlichen Limit von {user.AUSGABENLIMIT} überschritten!";
                         RedText(warnung);
                     }
 
@@ -317,14 +363,12 @@ namespace Haushaltsbuch
 
         public static void RedText(string text)
         {
-
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine(text);
             Console.ResetColor();
         }
         public static void BlauText(string text)
         {
-
             Console.ForegroundColor = ConsoleColor.Blue;
             Console.WriteLine(text);
             Console.ResetColor();
@@ -334,10 +378,8 @@ namespace Haushaltsbuch
 
         public static void ExportToPdf(List<Eintrag> eintraege, string dateiPfad)
         {
-            PdfSharp.Pdf.PdfDocument dokument = new PdfSharp.Pdf.PdfDocument();
-
+            PdfDocument dokument = new PdfDocument();
             dokument.Info.Title = "Haushaltsbuch Export";
-
             PdfPage seite = dokument.AddPage();
             XGraphics gfx = XGraphics.FromPdfPage(seite);
             XFont font = new XFont("NotoSans", 12);
@@ -353,35 +395,27 @@ namespace Haushaltsbuch
             {
                 gfx.DrawString($"{e.Datum:dd.MM.yyyy} | {e.Kategorie} | {e.Betrag} € | {e.Typ}",
                                font, XBrushes.Black, new XPoint(40, y));
-                y += 20;
+                y += 15;
             }
 
             dokument.Save(dateiPfad);
             Console.WriteLine($"PDF erfolgreich gespeichert: {Path.GetFullPath(dateiPfad)}");
-            
+
         }
         public static void DruckenEintraege(string dateiPfad)
         {
 
-
-            if (File.Exists(dateiPfad))
-            {            
+           
                 Console.WriteLine("PDF wird gedruckt...");
                 var args = $"-print-to-default \"{dateiPfad}\"";
                 Process.Start(new ProcessStartInfo(dateiPfad, args) { CreateNoWindow = true, UseShellExecute = true });
-            }
-            else
-            {
-                ExportToPdf(GefilterteEintraege, dateiPfad);
-                DruckenEintraege(dateiPfad);
-            }
         }
 
-            //PrintDocument pd = new PrintDocument();
-            //pd.PrintPage += PrintPageHandler;
-            //pd.PrinterSettings.PrinterName = "Microsoft Print to PDF";
-            //pd.Print();
-        
+        //PrintDocument pd = new PrintDocument();
+        //pd.PrintPage += PrintPageHandler;
+        //pd.PrinterSettings.PrinterName = "Microsoft Print to PDF";
+        //pd.Print();
+
         //private static void PrintPageHandler(object sender, PrintPageEventArgs e)
         //{
         //    string text = "Haushaltsbuch – Übersicht\n\n" +
@@ -394,24 +428,3 @@ namespace Haushaltsbuch
     }
 }
 
-
-// Stellen Sie sicher, dass Sie das NuGet-Paket "System.Drawing.Common" installiert haben.
-// Fügen Sie in Ihrem Projekt (z.B. über NuGet-Paket-Manager oder mit folgendem Befehl im Terminal):
-// dotnet add package System.Drawing.Common
-
-// Zusätzlich: Für .NET 6+ auf Nicht-Windows-Systemen müssen Sie eventuell in Ihrer .csproj-Datei Folgendes ergänzen:
-// <PropertyGroup>
-//   <UseSystemDrawing>true</UseSystemDrawing>
-// </PropertyGroup>
-//
-// Beispiel für die .csproj-Datei:
-//
-// <Project Sdk="Microsoft.NET.Sdk">
-//   <PropertyGroup>
-//     <OutputType>Exe</OutputType>
-//     <TargetFramework>net6.0</TargetFramework>
-//     <UseSystemDrawing>true</UseSystemDrawing>
-//   </PropertyGroup>
-// </Project>
-//
-// Damit wird sichergestellt, dass "System.Drawing.Printing.PrintDocument" verfügbar ist.

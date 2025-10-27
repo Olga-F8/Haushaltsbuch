@@ -12,7 +12,6 @@ namespace Haushaltsbuch
     public class Eintrag
     {
         public int UserId { get; set; }
-
         public double Betrag { get; set; }
         public string Kategorie { get; set; }
         public DateTime Datum { get; set; }
@@ -45,20 +44,18 @@ namespace Haushaltsbuch
             if (!betrag_check)
             {
                 player_e.Play();
-                Console.WriteLine("Ungültiger Betrag. Bitte eine Zahl eingeben.");
+                Statistik.RedText("Ungültiger Betrag. Bitte eine Zahl eingeben.");
                 return;
             }
             Console.Write("Kategorie: ");
             string kategorie = Console.ReadLine() ?? "";
-
-
 
             Console.Write("Datum (yyyy-MM-dd): ");
             var datum_check = DateTime.TryParse(Console.ReadLine(), out DateTime datum);
             if (!datum_check)
             {
                 player_e.Play();
-                Console.WriteLine("Ungültiges Datum. Bitte im Format yyyy-MM-dd eingeben.");
+                Statistik.RedText("Ungültiges Datum. Bitte im Format yyyy-MM-dd eingeben.");
                 return;
             }
 
@@ -67,7 +64,7 @@ namespace Haushaltsbuch
             if (typ != "Einnahme" && typ != "Ausgabe")
             {
                 player_e.Play();
-                Console.WriteLine("Ungültiger Typ. Bitte 'Einnahme' oder 'Ausgabe' eingeben.");
+                Statistik.RedText("Ungültiger Typ. Bitte 'Einnahme' oder 'Ausgabe' eingeben.");
                 return;
             }
 
@@ -81,22 +78,17 @@ namespace Haushaltsbuch
                 {
                     count++;
                 }
-
             }
-            Console.WriteLine(count);
-            Console.WriteLine(KategorieClass.Kategorien.Count);
-
             if (count == KategorieClass.Kategorien.Count)
             {
                 KategorieClass neueKategorie = new KategorieClass(kategorie);
                 KategorieClass.Kategorien.Add(neueKategorie);
-
             }
             Json.JsonSpeichern(User.users, KategorieClass.Kategorien, Eintraege);
 
             SoundPlayer player_s = new SoundPlayer("success.wav");
             player_s.Play();
-            Console.WriteLine("Eintrag erfolgreich hinzugefügt!\n");
+            Statistik.BlauText("Eintrag erfolgreich hinzugefügt!\n");
             Statistik.MonatlicheGesamtausgabenBerechen();
             Statistik.AusgabenLimitPruefen();
 
@@ -149,21 +141,21 @@ namespace Haushaltsbuch
                     else
                     {
                         player_e.Play();
-                        Console.WriteLine("Falsche Eingabe!");
+                        Statistik.RedText("Falsche Eingabe!");
                         return;
                     }
                 }
                 else
                 {
                     player_e.Play();
-                    Console.WriteLine("Falsche Eingabe!");
+                    Statistik.RedText("Falsche Eingabe!");
                     return;
                 }
             }
             else
             {
                 player_e.Play();
-                Console.WriteLine("Falsche Eingabe!");
+                Statistik.RedText("Falsche Eingabe!");
                 return;
             }
         }
@@ -187,7 +179,7 @@ namespace Haushaltsbuch
                                 if (!betrag_check)
                                 {
                                     player_e.Play();
-                                    Console.WriteLine("Ungültiger Betrag. Bitte eine Zahl eingeben.");
+                                    Statistik.RedText("Ungültiger Betrag. Bitte eine Zahl eingeben.");
                                     return;
                                 }
                                 eintrag.Betrag = neuer_betrag;
@@ -205,7 +197,7 @@ namespace Haushaltsbuch
                                 if (!datum_check)
                                 {
                                     player_e.Play();
-                                    Console.WriteLine("Ungültiges Datum. Bitte im Format yyyy-MM-dd eingeben.");
+                                    Statistik.RedText("Ungültiges Datum. Bitte im Format yyyy-MM-dd eingeben.");
                                     return;
                                 }
                                 eintrag.Datum = neues_datum;
@@ -217,7 +209,7 @@ namespace Haushaltsbuch
                                 if (neuer_typ != "Einnahme" && neuer_typ != "Ausgabe")
                                 {
                                     player_e.Play();
-                                    Console.WriteLine("Ungültiger Typ. Bitte 'Einnahme' oder 'Ausgabe' eingeben.");
+                                    Statistik.RedText("Ungültiger Typ. Bitte 'Einnahme' oder 'Ausgabe' eingeben.");
                                     return;
                                 }
                                 eintrag.Typ = neuer_typ;
@@ -226,13 +218,13 @@ namespace Haushaltsbuch
                             Console.WriteLine($"{nummer}. Betrag: {eintrag.Betrag}, Kategorie: {eintrag.Kategorie}, Datum: {eintrag.Datum.ToShortDateString()}, Typ: {eintrag.Typ}");
                             SoundPlayer player_s = new SoundPlayer("success.wav");
                             player_s.Play();
-                            Console.WriteLine("Eintrag erfolgreich geändert und gespeichert!");
+                            Statistik.BlauText("Eintrag erfolgreich geändert und gespeichert!");
                             break;
                         }
                         else
                         {
                             player_e.Play();
-                            Console.WriteLine("Kein Eintrag für die angegebenen Nummer gefunden.");
+                            Statistik.RedText("Kein Eintrag für die angegebenen Nummer gefunden.");
                         }
                     }
                 }
@@ -250,14 +242,8 @@ namespace Haushaltsbuch
                 {
                     count++;
                     UserEintragListe.Add(eintrag);
-                   // Console.WriteLine($"{count}. Betrag: {eintrag.Betrag}, Kategorie: {eintrag.Kategorie}, Datum: {eintrag.Datum.ToShortDateString()}, Typ: {eintrag.Typ}");
                 }
-            }
-            
-            //foreach (var eintrag in UserEintragListe)
-            //{
-            //    Console.WriteLine($"{eintrag.Betrag}, {eintrag.Kategorie}, {eintrag.Datum.ToShortDateString()}, {eintrag.Typ}");
-            //}
+            }          
             return UserEintragListe;
         }
         public static int EintraegeAnzeigen()
@@ -271,7 +257,7 @@ namespace Haushaltsbuch
 
             if (Eintraege.Count == 0)
             {
-                Console.WriteLine("Keine Einträge vorhanden.");
+                Statistik.RedText("Keine Einträge vorhanden.");
                 return 0;
             }
             foreach (var eintrag in Eintraege)
@@ -285,12 +271,11 @@ namespace Haushaltsbuch
             }
             if (count == 0)
             {
-                Console.WriteLine("Keine Einträge vorhanden.");
+                Statistik.RedText("Keine Einträge vorhanden.");
             }
             return count;
         }
 
-        //prüfen ob richtige eintrag gelöscht wird
         public static void EintragLoeschen()
         {
             int count1 = 0;
@@ -307,7 +292,7 @@ namespace Haushaltsbuch
             {
                 SoundPlayer player_e = new SoundPlayer("error.wav");
                 player_e.Play();
-                Console.WriteLine("Falsche Eingabe!");
+                Statistik.RedText("Falsche Eingabe!");
                 return;
             }
 
@@ -324,23 +309,18 @@ namespace Haushaltsbuch
                             Json.JsonSpeichern(User.users, KategorieClass.Kategorien, Eintrag.Eintraege);
                             SoundPlayer player_s = new SoundPlayer("success.wav");
                             player_s.Play();
-                            Console.WriteLine("Eintrag erfolgreich gelöscht!");
+                            Statistik.BlauText("Eintrag erfolgreich gelöscht!");
                             break;
                         }
                         else
                         {
                             SoundPlayer player_e = new SoundPlayer("error.wav");
                             player_e.Play();
-                            Console.WriteLine("Kein Eintrag für die angegebenen Nummer gefunden.");
+                            Statistik.RedText("Kein Eintrag für die angegebenen Nummer gefunden.");
                         }
                     }
                 }
             }
-            //var eintrag = Eintrag.Eintraege[nummer - 1];
-            //Console.WriteLine(eintrag);
-
         }
-
-
     }
 }

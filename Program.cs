@@ -17,11 +17,6 @@ namespace Haushaltsbuch
         public static void Main(string[] args)
         {
             GlobalFontSettings.FontResolver = new EmbeddedFontResolver();
-            //var asm = Assembly.GetExecutingAssembly();
-            //foreach (var res in asm.GetManifestResourceNames())
-            //{
-            //    Console.WriteLine(res);
-            //}
             Json.JsonLaden(ref User.users, ref KategorieClass.Kategorien, ref Eintrag.Eintraege);
             WillkomenMenue();
         }
@@ -54,7 +49,6 @@ namespace Haushaltsbuch
                                 break;
                             else
                             {
-                               
                                 Hauptmenue();
                             }
                             break;
@@ -66,13 +60,13 @@ namespace Haushaltsbuch
                             User.UserErstellen();
                             break;
                         default:
-                            Console.WriteLine("Ungültige Eingabe. Bitte 1 oder 2 eingeben.");
+                            Statistik.RedText("Ungültige Eingabe. Bitte 1 oder 2 eingeben.");
                             break;
                     }
                 }
                 else
                 {
-                    Console.WriteLine("Ungültige Eingabe. Bitte eine Zahl eingeben.");
+                    Statistik.RedText("Ungültige Eingabe. Bitte eine Zahl eingeben.");
                 }
                 Console.WriteLine("Drücken Sie eine Taste, um fortzufahren...");
                 Console.ReadKey();
@@ -85,78 +79,41 @@ namespace Haushaltsbuch
             {
                 Console.Clear();
                 Statistik.BlauText("Willkomen im Hauptmenü, " + User.users.FirstOrDefault(u => u.ID == User.AktuellerUserID)?.NAME + "!\n");
-
                 Console.WriteLine("================================");
                 Console.WriteLine("Hauptmenü");
                 Console.WriteLine("================================\n");
-                Console.WriteLine("1. Eintrag hinzufügen\n" +
-                                  "2. Eintrag bearbeiten\n" +
-                                  "3. Eintrag löschen\n" +
-                                  "4. Einträge anzeigen");
-                Console.WriteLine("5. Filter einsetzen\n" +
-                                  "6. Ausgabenlimit einstellen");
-                Console.WriteLine("7. Logout\n");
+                Console.WriteLine("1. Eintrag hinzufügen\n" + "2. Eintrag bearbeiten\n" +
+                                  "3. Eintrag löschen\n" + "4. Einträge anzeigen\n" +
+                                  "5. Filter einsetzen\n" + "6. Ausgabenlimit einstellen\n" +
+                                  "7. Logout\n");
                 Console.Write("Bitte eine Zahl eingeben: ");
                 var eingabe_check = int.TryParse(Console.ReadLine(), out int eingabe);
                 if (eingabe_check)
                 {
                     switch (eingabe)
                     {
-
-                        case 1:
-                            Eintrag.EintragHinzufuegen();
+                        case 1: Eintrag.EintragHinzufuegen();
                             break;
-                        case 2:
-                            Eintrag.EintragBearbeiten();
+                        case 2: Eintrag.EintragBearbeiten();
                             break;
-                        case 3:
-                            Eintrag.EintragLoeschen();
+                        case 3: Eintrag.EintragLoeschen();
                             break;
-                        case 4:
-                            Eintrag.EintraegeAnzeigen();
+                        case 4: Eintrag.EintraegeAnzeigen();
                             break;
-                        case 5:
-                            Console.Clear();
-                           // Eintrag.UserListeladen();
-                            Statistik.FilterEisetzen(Statistik.GefilterteEintraege);
+                        case 5: 
+                            Statistik.FilterEinsetzen(Statistik.GefilterteEintraege);
                             break;
-                        case 6:
-                            Statistik.AusgabenLimitAnzeigen();
+                        case 6: Statistik.AusgabenLimitAnzeigen();
                             break;
-                        //case 7:
-                        //    //diese methode soll lieber gelöscht werden
-
-
-
-
-
-                        //    var aktuellerUser = User.users.FirstOrDefault(u => u.ID == User.AktuellerUserID);
-                        //    if (aktuellerUser != null)
-                        //    {
-                        //        string dateiname = $"Haushalt_{aktuellerUser.NAME}_{DateTime.Now.ToShortDateString()}.pdf";
-                        //        Statistik.ExportToPdf(Eintrag.Eintraege, dateiname);
-                        //    }
-                        //    else
-                        //    {
-                        //        Statistik.ExportToPdf(Eintrag.Eintraege, $"Haushalt_Unbekannt_{DateTime.Now.ToShortDateString()}.pdf");
-                        //    }
-                        //    //Statistik.ExportToPdf(Eintrag.Eintraege, "Haushalt.pdf");
-                        //    break;
-                        case 7:
-                            User.AktuellerUserID = 0;
+                        case 7: User.AktuellerUserID = 0;
                             return;
-                        //Console.WriteLine("Bis zum nächten mal!");
-                        //Environment.Exit(0);
-                        //break;
                         default:
-                            Console.WriteLine("Ungültige Eingabe. Bitte eine Zahl zwischen 1 und 3 eingeben.");
+                            Statistik.RedText("Ungültige Eingabe. Bitte eine Zahl zwischen 1 und 3 eingeben.");
                             break;
                     }
                 }
                 else
-                {
-                    Console.WriteLine("Ungültige Eingabe. Bitte eine Zahl eingeben.");
-                }
+                    Statistik.RedText("Ungültige Eingabe. Bitte eine Zahl eingeben.");
                 Console.WriteLine("\nDrücken Sie eine Taste, um fortzufahren...");
                 Console.ReadKey();
             }

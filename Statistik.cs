@@ -79,7 +79,7 @@ namespace Haushaltsbuch
                 var eingabe_check = int.TryParse(Console.ReadLine(), out int eingabe);
                 if (!eingabe_check || eingabe < 1 || eingabe > 8)
                 {
-                    Console.WriteLine("Ungültige Eingabe. Bitte eine Zahl zwischen 1 und 8 eingeben.");
+                    RedText("Ungültige Eingabe. Bitte eine Zahl zwischen 1 und 8 eingeben.");
                     return gefilterteListe;
                 }
                 switch (eingabe)
@@ -128,6 +128,7 @@ namespace Haushaltsbuch
                         FilterEinsetzen(gefilterteListe);
                         break;
                     case 5:
+                        BlauText("Filter zurückgesetzt.");
                         gefilterteListe = FilterZuruecksetzen();
                         FilterEinsetzen(gefilterteListe);
 
@@ -158,7 +159,7 @@ namespace Haushaltsbuch
                         logout = true;
                         break;
                     default:
-                        Statistik.RedText("Ungültige Eingabe. Bitte eine Zahl zwischen 1 und 8 eingeben.");
+                       RedText("Ungültige Eingabe. Bitte eine Zahl zwischen 1 und 8 eingeben.");
                        break;
                 }
                 return gefilterteListe;
@@ -183,7 +184,6 @@ namespace Haushaltsbuch
             monat_filter = "";
             jahr_filter = "";
             kategorie_filter = "";
-            Statistik.BlauText("Filter zurückgesetzt.");
             return GefilterteEintraege;
         }
         public static void FilternNachTag()
@@ -264,6 +264,7 @@ namespace Haushaltsbuch
                         Kategoriesumme += eintrag.Betrag;
                     }
                 }
+                Kategoriesumme = Math.Round(Kategoriesumme, 2);
                 if (Kategoriesumme != 0)
                     Console.WriteLine($"{kat.NAME} / {Kategoriesumme}");
                 Kategoriesumme = 0;
@@ -313,7 +314,7 @@ namespace Haushaltsbuch
                 case 'n':
                     return;
                 default:
-                    Statistik.RedText("\nUngültige Eingabe. Bitte 'j' oder 'n' eingeben.");
+                    RedText("\nUngültige Eingabe. Bitte 'j' oder 'n' eingeben.");
                     break;
             }
             MonatlicheGesamtausgaben = 0;
@@ -404,7 +405,6 @@ namespace Haushaltsbuch
         }
         public static void DruckenEintraege(string dateiPfad)
         {
-
            
                 Console.WriteLine("PDF wird gedruckt...");
                 var args = $"-print-to-default \"{dateiPfad}\"";

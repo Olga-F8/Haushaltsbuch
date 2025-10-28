@@ -48,8 +48,11 @@ namespace Haushaltsbuch
                             if (User.UserLogin() == 0)
                                 break;
                             else
-                            {
+                            { 
+                                Statistik.GefilterteEintraege.Clear();
+                                Statistik.GefilterteEintraege = Eintrag.UserListeladen();
                                 Hauptmenue();
+                               
                             }
                             break;
                         case 2:
@@ -106,9 +109,10 @@ namespace Haushaltsbuch
                         case 6: Statistik.AusgabenLimitAnzeigen();
                             break;
                         case 7: User.AktuellerUserID = 0;
+                            Statistik.BlauText("Abmeldung erfolgreich.");
                             return;
                         default:
-                            Statistik.RedText("Ungültige Eingabe. Bitte eine Zahl zwischen 1 und 3 eingeben.");
+                            Statistik.RedText("Ungültige Eingabe. Bitte eine Zahl zwischen 1 und 7 eingeben.");
                             break;
                     }
                 }

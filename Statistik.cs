@@ -73,7 +73,8 @@ namespace Haushaltsbuch
                 Console.WriteLine("7. Die Liste ausdrucken");
                 Console.WriteLine("8. Zurück");
 
-
+                if(monat_filter != "" || jahr_filter != "" || kategorie_filter != "")
+                BlauText($"\nFilter ist aktiv: {monat_filter} {jahr_filter} {kategorie_filter}");
                 GefilterteEintraegeAnzeigen();
                 Console.Write("\nWählen Sie eine Option (1-8): ");
                 var eingabe_check = int.TryParse(Console.ReadLine(), out int eingabe);
@@ -135,11 +136,15 @@ namespace Haushaltsbuch
                         return gefilterteListe;
                     case 6:
                         var aktuellerUser = User.users.FirstOrDefault(u => u.ID == User.AktuellerUserID);
-                        string dateiname = $"Einträge_{aktuellerUser.NAME}_{DateTime.Now.ToShortDateString()}.pdf";
-
-                        if (aktuellerUser != null)
+                        string dateiname;
+                        if (monat_filter == "" && jahr_filter == "" && kategorie_filter == "")
+                            dateiname = $"Alle_Einträge_{aktuellerUser.NAME}_{DateTime.Now.ToShortDateString()}.pdf";
+                        else
+                            dateiname = $"Einträge_mit_Filter_{monat_filter}_{jahr_filter}_{kategorie_filter}_{aktuellerUser.NAME}_{DateTime.Now.ToShortDateString()}.pdf";
+                        if (aktuellerUser != null && !File.Exists(dateiname))
                             ExportToPdf(gefilterteListe, dateiname);
-                       break;
+                        else Console.WriteLine("Pdf bereits exestiert.");
+                            break;
                     case 7:
                         var aktuellerUser1 = User.users.FirstOrDefault(u => u.ID == User.AktuellerUserID);
                         string dateiname1;
@@ -249,7 +254,7 @@ namespace Haushaltsbuch
 
             return GefilterteEintraege;
         }
-        public static void SummeNachKategorie()//(string kategorie)
+        public static void SummeNachKategorie()
         {
             Kategoriesumme = 0;
             int count = 0;

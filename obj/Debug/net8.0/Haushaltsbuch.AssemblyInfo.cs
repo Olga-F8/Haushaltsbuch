@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Haushaltsbuch")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+afae73a7d3b1e09a4b44825a1a434315eb2e037e")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+27f47767c7b8ef163b554c5a2da68287022d9176")]
 [assembly: System.Reflection.AssemblyProductAttribute("Haushaltsbuch")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Haushaltsbuch")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
